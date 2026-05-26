@@ -1,34 +1,90 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الإمبراطورية التقنية</title>
-    <link rel="stylesheet" href="style.css">
+    <title>بوابة الرصيد</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background: #f4f5fa;
+            font-family: Tahoma, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 340px;
+            margin: 60px auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px #0002;
+            padding: 48px 24px 32px 24px;
+            text-align: center;
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+        #balance {
+            color: #1e8e20;
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-top: 18px;
+            margin-bottom: 8px;
+        }
+        .reload-btn {
+            background: #229a14;
+            color: #fff;
+            font-size: 1em;
+            border: none;
+            border-radius: 7px;
+            padding: 12px 36px;
+            margin-top: 22px;
+            cursor: pointer;
+            transition: background 0.18s;
+        }
+        .reload-btn:hover {
+            background: #197c0d;
+        }
+        .foot {
+            margin-top: 30px;
+            font-size: 0.93em;
+            color: #999;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="logo">👑</div>
-            <h1>بوابة الإمبراطورية التقنية</h1>
-            <p id="status">جاري الاتصال بالسحاب...</p>
-        </header>
-
-        <main>
-            <div class="card">
-                <h3>💰 محفظة عصام</h3>
-                <div id="balance" class="balance">0.00 ريال</div>
-            </div>
-
-            <div class="card">
-                <h3>📢 المسوق الآلي</h3>
-                <div id="links-container">لا توجد روابط نشطة حالياً</div>
-            </div>
-        </main>
+        <h2>الرصيد المتاح</h2>
+        <span id="balance">جاري التحميل...</span><br>
+        <button class="reload-btn" onclick="loadBalance()">تحديث الرصيد</button>
+        <div class="foot">جميع الحقوق محفوظة</div>
     </div>
+    <script>
+        const apiUrl = "https://remix-remix-remix-remix-947287254218.europe-west1.run.app/balance";
 
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="main.js"></script>
+        function loadBalance() {
+            const balanceElem = document.getElementById("balance");
+            balanceElem.innerText = "جاري التحميل...";
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && typeof data.amount !== "undefined") {
+                        balanceElem.innerText = data.amount + " ريال";
+                    } else {
+                        balanceElem.innerText = "الرصيد غير متوفر";
+                    }
+                })
+                .catch(err => {
+                    balanceElem.innerText = "خطأ في جلب الرصيد";
+                });
+        }
+
+        window.addEventListener("DOMContentLoaded", loadBalance);
+    </script>
 </body>
 </html>
